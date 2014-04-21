@@ -22,10 +22,10 @@ get '/movies/new' do
 end
 
 post '/movies' do
-  c = PGconn.new(:host => "localhost", :dbname => dbname)
-  c.exec_params("INSERT INTO movies (title, year) VALUES ($1, $2)",
-                  [params["title"], params["year"]])
-  c.close
+  c = PGconn.new(:host => "localhost", :dbname => dbname)          # sets postgres connection
+  c.exec_params("INSERT INTO movies (title, year) VALUES ($1, $2)",       
+                  [params["title"], params["year"]])          # sql to database
+  c.close             # close database connection
   redirect '/'
 end
 
