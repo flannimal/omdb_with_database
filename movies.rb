@@ -10,15 +10,28 @@ configure do
 end
 
 get '/' do
-  #Add code here
+  erb :index  
 end
 
+get '/movies' do
+  c = PGconn.new(:host => "localhost", :dbname => dbname)          
+  @movies = c.exec_params("SELECT * FROM movies WHERE title = $1;", [params["title"]])            
+  c.close 
+  erb :movies         
+end
 
-#Add code here
+get '/movie/:id' do
+  c = PGconn.new(:host => "localhost", :dbname => dbname)          
+  @movies = c.exec_params("SELECT * FROM movies WHERE id = $1;", [params["id"]])
+  erb :details  ### TODO MAKE DETAILS PAGE         
+end
 
+get '/movie/:id' do
+  # details of one movie      list of actors in phase 4 as well...
+end
 
 get '/movies/new' do
-  erb :new_movie
+  erb :new
 end
 
 post '/movies' do
@@ -29,8 +42,18 @@ post '/movies' do
   redirect '/'
 end
 
+# get '/results' do
+#   res=Typhoeus.get("www.omdbapi.com/", :params => { :s => params["movie"] }) 
+#   json_results = JSON.parse(res.body) 
+#     @movies = json_results["Search"]   # .each this on erb page 
+#     @movies = @movies.sort_by {|x| x["Year"]}    #sorts by year
+#     @movies = @movies.reverse                    #most recent displayed first
+#     puts @movies
+#   erb :results
+# end
+
 def dbname
-  "testdb"
+  "movie_party"
 end
 
 def create_movies_table
